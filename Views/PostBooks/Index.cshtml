@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Homework.Models.Book>
+
+@{
+    ViewData["Title"] = "深夜食堂留言板";
+}
+
+<h1 class="text-center alert alert-yellow">@ViewData["Title"]</h1>
+<a asp-action="Create" class="text-primary">我要留言</a>
+
+<div class="row mt-1">
+    @foreach (var item in Model)
+    {
+        <div class="card shadow col-lg-6 mb-3">
+
+            @if (item.Photo != null)
+            {
+                <img src="@Url.Action("GetImage","Books", new{gid=item.GId})" class="card-img-top mt-2" alt="...">
+            }
+
+            <div class="card-body  d-flex flex-column">
+                <h3 class="card-title"><strong> @Html.DisplayFor(model => item.Title)</strong></h3>
+                <p class="card-text">@Html.Raw(item.Description.ToString().Replace("\r\n", "<br>"))</p>
+                <div class="card-footer mt-auto">
+                    <p class="text-end fs-6">
+                        @Html.DisplayFor(model => item.Author) 於 @Html.DisplayFor(model => item.TimeStamp) 發佈
+                        | <a asp-action="Details" asp-route-id="@item.GId">看更多...</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<p>
+    <a asp-action="Create" class="btn btn-success btn-lg d-grid gap-2">我要留言</a>
+</p>

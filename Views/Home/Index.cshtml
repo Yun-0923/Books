@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Homework.Models.Book>
+@{
+    ViewData["Title"] = "首頁";
+    string a = "active";
+    int i = 0;
+}
+
+
+<div class="text-center bg-img  fw-bold">
+    <h1 class="display-4 text-white pt-4">歡迎光臨深夜食堂留言板</h1>
+    <p class="fs-4">一起來分享消夜吧!!</p>
+    <p class="text-start m-2">
+        <a asp-action="Create" asp-controller="PostBooks" class="btn btn-warning btn-lg mb-1">我要分享</a>
+    </p>
+</div>
+
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        @foreach (var item in Model)
+        {
+            a = i == 0 ? "active" : "";
+            <div class="carousel-item @a">
+                <img src=@Url.Action("GetImage","Books", new{gid= item.GId}) class="d-flex w-100" alt="...">
+            </div>
+            i++;
+        }
+    </div>
+</div>

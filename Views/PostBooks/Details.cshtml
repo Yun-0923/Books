@@ -1,0 +1,79 @@
+﻿@model Homework.Models.Book
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@Html.DisplayFor(model => model.Title)</h1>
+
+<div class="card shadow">
+    @if (Model.Photo != null)
+    {
+        <img src="@Url.Action("GetImage","Books", new{gid=Model.GId})" class="card-img-top" alt="...">
+    }
+    <div class="card-body">
+        <h3 class="card-title"><strong> @Html.DisplayFor(model => model.Title)</strong></h3>
+        <p class="card-text">@Html.Raw(Model.Description.ToString().Replace("\r\n", "<br>"))</p>
+        <p class="text-end fs-6">@Html.DisplayFor(model => model.Author) 於 @Html.DisplayFor(model => model.TimeStamp) 發佈</p>
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#ReFormModal">
+    我要回覆
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="ReFormModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@Model.Title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="ReForm">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" onclick="ReCreate()">確定回覆</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="reBookList">
+    @await Component.InvokeAsync("VCReBooks", new { gid = Model.GId })
+</div>
+
+
+<a asp-action="Index">回留言板管理主畫面</a>
+
+@section Scripts
+{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $('#ReForm').load(`/RePostBooks/Create?GId=@(Model.GId)`)
+
+        const ReFormModal = new bootstrap.Modal(document.getElementById('ReFormModal'))
+
+        function ReCreate() {
+
+            $.ajax({
+                type: "Post",
+                url: `/RePostBooks/Create`,
+                data: $('#reForm').serialize(),
+                success: (data) => {
+                    $('#Description').val('');
+                    $('#Author').val('');
+
+                    ReFormModal.hide();
+
+                    $('#reBookList').load(`/RePostBooks/GetReBooksByVC/@(Model.GId)`)
+                }
+            });
+
+        }
+
+    </script>
+}
